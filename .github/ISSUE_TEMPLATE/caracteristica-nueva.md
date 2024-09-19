@@ -7,7 +7,9 @@ assignees: ''
 
 ---
 
-:sparkles: Nueva Feature: [Nombre de la feature]:mag: Descripción
+:sparkles: [Nombre de la feature]
+
+:mag: Descripción
 <!-- Breve descripción de la característica que se va a implementar -->
 Una breve descripción del problema que resuelve esta nueva característica o de qué manera mejorará el proyecto.
 
