@@ -1,0 +1,35 @@
+﻿@page "/camera"
+@inject IJSRuntime JSRuntime
+@using System.Net.Http
+@using System.IO
+
+<h1>Blazor Webcam</h1>
+<video id="videoFeed" width="320" height="240" />
+<canvas class="d-none" id="currentFrame" width="320" height="240" />
+<br />
+<button class="btn btn-primary mb-3" @onclick="CaptureFrame">Capture Frame</button>
+<br />
+@if (!string.IsNullOrEmpty(frameUri))
+{
+    <img src="@frameUri" />
+}
+
+@code {
+    private string frameUri;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("startVideo", "videoFeed");
+    }
+
+    private async Task CaptureFrame()
+    {
+        await JSRuntime.InvokeAsync<string>("getFrame", "videoFeed", "currentFrame", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public void ProcessImage(string imageString)
+    {
+        frameUri = imageString; // Directly use the base64 image string for display
+    }
+}

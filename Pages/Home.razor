@@ -27,7 +27,7 @@
                 }
             };
 
-        var pixelData = barcodeWriter.Write("Aqui iria el codigo de id del cliente del gym");
+        var pixelData = barcodeWriter.Write("Hola.com");
 
         using (var image = Image.LoadPixelData<Rgba32>(pixelData.Pixels, pixelData.Width, pixelData.Height))
         {
