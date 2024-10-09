@@ -1,0 +1,17 @@
+﻿@page "/Membresia"
+@using System.ComponentModel.DataAnnotations
+
+
+<h1>Renovación de Membresía</h1>
+
+<EditForm Model="@membresia" OnValidSubmit="@RenovarMembresia">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <InputText id="nombre" class="form-control" @bind-Value="membresia.Nombre" />
+        <ValidationMessage For="@(() => membresia.Nombre)" />
+    </div>
+
+    <div class="form-group
