@@ -14,7 +14,7 @@ namespace SSC_Gimnasio.Modelos
 
         // Relación con la tabla Clientes
         [ForeignKey("Id_Cliente")]
-        public Clientes Cliente { get; set; }
+        public Clientes ?Cliente { get; set; }
 
         [Required(ErrorMessage = "El campo Fecha de visita es obligatorio")]
         public DateTime Fecha_Visita { get; set; } // DATETIME
