@@ -1,5 +1,5 @@
-﻿@* 
-@using System.ComponentModel.DataAnnotations
+﻿ @page "/renovacion"
+ using System.ComponentModel.DataAnnotations
 
 
 <h1>Renovación de Membresía</h1>
@@ -85,4 +85,4 @@
         }.Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id.ToString() == criterioBusqueda).ToList();
     }
 }
- *@
+ 
