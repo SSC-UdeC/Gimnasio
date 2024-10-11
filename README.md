@@ -21,3 +21,10 @@ Existe una barra de navegacion lateral con las siguientes funcionalidades
 - **Gestión de clientes**: Desde el panel de administración, puedes agregar, editar o eliminar clientes.
 - **Renovación de membresías**: Accede a la sección de membresías para renovar el plan de los clientes.
 - **Lectura de códigos QR**: Usa la funcionalidad de escaneo de QR para validar el acceso de los miembros.
+
+
+## Depedencias de Nuget
+
+- **Microsoft.EntityFrameworkCore**
+- **Microsoft.EntityFrameworkCore.SqlServer**
+- **Microsoft.EntityFrameworkCore.Tools**
