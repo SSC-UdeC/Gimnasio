@@ -1,6 +1,7 @@
-﻿ @page "/renovacion"
- using System.ComponentModel.DataAnnotations
-
+﻿@page "/renovacion"
+@using System.ComponentModel.DataAnnotations
+@using SSC_Gimnasio.Modelos
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
 <h1>Renovación de Membresía</h1>
 
@@ -16,7 +17,7 @@
     <select @onchange="OnSeleccionarCliente">
         @foreach (var cliente in clientesEncontrados)
         {
-            <option value="@cliente.Id">@cliente.Nombre</option>
+            <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
         }
     </select>
 }
@@ -25,11 +26,10 @@
 {
     <div>
         <p>Cliente: @clienteSeleccionado.Nombre</p>
-        <p>Membresía actual: @clienteSeleccionado.PlanActual</p>
-        <p>Fecha de expiración: @clienteSeleccionado.FechaExpiracion.ToString("dd/MM/yyyy")</p>
+        <p>Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
     </div>
 
-    @if (MembresiaCercaDeCaducar(clienteSeleccionado.FechaExpiracion))
+    @if (MembresiaCercaDeCaducar(clienteSeleccionado.Fecha_Vencimiento))
     {
         <div>
             <p>Seleccione un nuevo plan:</p>
@@ -43,23 +43,27 @@
 }
 
 @code {
-    private string criterioBusqueda { get; set; }
-    private List<Cliente> clientesEncontrados = new List<Cliente>();
-    private Cliente clienteSeleccionado;
+    private string criterioBusqueda { get; set; } = string.Empty; // Inicializa el modelo como un string vacío
+    private List<Clientes> clientesEncontrados = new List<Clientes>();
+    private Clientes clienteSeleccionado;
 
-    private void BuscarCliente()
+    private async Task BuscarCliente()
     {
-        clientesEncontrados = ObtenerClientes(criterioBusqueda);
-        if (clientesEncontrados.Any())
+        if (!string.IsNullOrWhiteSpace(criterioBusqueda))
         {
-            clienteSeleccionado = null;
+            var todosClientes = await repositorioClientes.GetAll();
+            clientesEncontrados = todosClientes
+                .Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id_Cliente.ToString() == criterioBusqueda)
+                .ToList();
+
+            clienteSeleccionado = null; // Limpiar selección previa
         }
     }
 
     private void OnSeleccionarCliente(ChangeEventArgs e)
     {
         var clienteId = Convert.ToInt32(e.Value);
-        clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id == clienteId);
+        clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id_Cliente == clienteId);
     }
 
     private bool MembresiaCercaDeCaducar(DateTime fechaExpiracion)
@@ -67,22 +71,13 @@
         return (fechaExpiracion - DateTime.Now).Days <= 15;
     }
 
-    private void RenovarMembresia(int dias)
+    private async Task RenovarMembresia(int dias)
     {
         if (clienteSeleccionado != null)
         {
-            clienteSeleccionado.FechaExpiracion = DateTime.Now.AddDays(dias);
+            clienteSeleccionado.Fecha_Vencimiento = DateTime.Now.AddDays(dias);
+            await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
             Console.WriteLine($"Membresía renovada por {dias} días.");
         }
     }
-
-    private List<Cliente> ObtenerClientes(string criterioBusqueda)
-    {
-        return new List<Cliente>
-        {
-            new Cliente { Id = 1, Nombre = "Juan Pérez", PlanActual = "Mensual", FechaExpiracion = DateTime.Now.AddDays(10) },
-            new Cliente { Id = 2, Nombre = "María López", PlanActual = "Anual", FechaExpiracion = DateTime.Now.AddDays(40) }
-        }.Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id.ToString() == criterioBusqueda).ToList();
-    }
 }
- 
