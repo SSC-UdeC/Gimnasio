@@ -1,0 +1,88 @@
+﻿@* 
+@using System.ComponentModel.DataAnnotations
+
+
+<h1>Renovación de Membresía</h1>
+
+<EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
+    <div>
+        <InputText id="buscar" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
+        <button type="submit">Buscar</button>
+    </div>
+</EditForm>
+
+@if (clientesEncontrados != null && clientesEncontrados.Any())
+{
+    <select @onchange="OnSeleccionarCliente">
+        @foreach (var cliente in clientesEncontrados)
+        {
+            <option value="@cliente.Id">@cliente.Nombre</option>
+        }
+    </select>
+}
+
+@if (clienteSeleccionado != null)
+{
+    <div>
+        <p>Cliente: @clienteSeleccionado.Nombre</p>
+        <p>Membresía actual: @clienteSeleccionado.PlanActual</p>
+        <p>Fecha de expiración: @clienteSeleccionado.FechaExpiracion.ToString("dd/MM/yyyy")</p>
+    </div>
+
+    @if (MembresiaCercaDeCaducar(clienteSeleccionado.FechaExpiracion))
+    {
+        <div>
+            <p>Seleccione un nuevo plan:</p>
+            <button @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
+            <button @onclick="() => RenovarMembresia(30)">Mensual (30 días)</button>
+            <button @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
+            <button @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
+            <button @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
+        </div>
+    }
+}
+
+@code {
+    private string criterioBusqueda { get; set; }
+    private List<Cliente> clientesEncontrados = new List<Cliente>();
+    private Cliente clienteSeleccionado;
+
+    private void BuscarCliente()
+    {
+        clientesEncontrados = ObtenerClientes(criterioBusqueda);
+        if (clientesEncontrados.Any())
+        {
+            clienteSeleccionado = null;
+        }
+    }
+
+    private void OnSeleccionarCliente(ChangeEventArgs e)
+    {
+        var clienteId = Convert.ToInt32(e.Value);
+        clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id == clienteId);
+    }
+
+    private bool MembresiaCercaDeCaducar(DateTime fechaExpiracion)
+    {
+        return (fechaExpiracion - DateTime.Now).Days <= 15;
+    }
+
+    private void RenovarMembresia(int dias)
+    {
+        if (clienteSeleccionado != null)
+        {
+            clienteSeleccionado.FechaExpiracion = DateTime.Now.AddDays(dias);
+            Console.WriteLine($"Membresía renovada por {dias} días.");
+        }
+    }
+
+    private List<Cliente> ObtenerClientes(string criterioBusqueda)
+    {
+        return new List<Cliente>
+        {
+            new Cliente { Id = 1, Nombre = "Juan Pérez", PlanActual = "Mensual", FechaExpiracion = DateTime.Now.AddDays(10) },
+            new Cliente { Id = 2, Nombre = "María López", PlanActual = "Anual", FechaExpiracion = DateTime.Now.AddDays(40) }
+        }.Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id.ToString() == criterioBusqueda).ToList();
+    }
+}
+ *@

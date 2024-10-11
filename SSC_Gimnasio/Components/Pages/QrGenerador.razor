@@ -1,0 +1,42 @@
+﻿@page "/"
+@using ZXing
+@using ZXing.Common
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.PixelFormats
+@using SixLabors.ImageSharp.Formats.Png
+@using SixLabors.ImageSharp.Processing
+@using System.IO
+
+<h3>Generar y Mostrar Código QR</h3>
+
+<img src="@qrCodeImage" alt="QR Code" />
+
+<button class="btn btn-primary">Bootstrap Button</button>
+
+
+@code {
+    private string ?qrCodeImage;
+
+    protected override void OnInitialized()
+    {
+
+        var barcodeWriter = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new EncodingOptions
+                {
+                    Width = 200,
+                    Height = 200
+                }
+            };
+
+        var pixelData = barcodeWriter.Write("Hola.com");
+
+        using (var image = Image.LoadPixelData<Rgba32>(pixelData.Pixels, pixelData.Width, pixelData.Height))
+        {
+            using var memoryStream = new MemoryStream();
+            image.Save(memoryStream, new PngEncoder()); 
+            qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+        }
+    }
+}
