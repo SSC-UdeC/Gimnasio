@@ -3,8 +3,6 @@
 
 <h1>Renovación de Membresía</h1>
 
-@page "/renovacion-membresia"
-
 <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
     <div>
         <InputText id="buscar" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
@@ -22,15 +20,15 @@
     </select>
 }
 
-@if (usuarioSeleccionado != null)
+@if (clienteSeleccionado != null)
 {
     <div>
-        <p>Cliente: @usuarioSeleccionado.Nombre</p>
-        <p>Membresía actual: @usuarioSeleccionado.PlanActual</p>
-        <p>Fecha de expiración: @usuarioSeleccionado.FechaExpiracion.ToString("dd/MM/yyyy")</p>
+        <p>Cliente: @clienteSeleccionado.Nombre</p>
+        <p>Membresía actual: @clienteSeleccionado.PlanActual</p>
+        <p>Fecha de expiración: @clienteSeleccionado.FechaExpiracion.ToString("dd/MM/yyyy")</p>
     </div>
 
-    @if (MembresiaCercaDeCaducar(usuarioSeleccionado.FechaExpiracion))
+    @if (MembresiaCercaDeCaducar(clienteSeleccionado.FechaExpiracion))
     {
         <div>
             <p>Seleccione un nuevo plan:</p>
@@ -45,44 +43,44 @@
 
 @code {
     private string criterioBusqueda { get; set; }
-    private List<Usuario> clientesEncontrados = new List<Usuario>();
-    private Usuario usuarioSeleccionado;
+    private List<Cliente> clientesEncontrados = new List<Cliente>();
+    private Cliente clienteSeleccionado;
 
     private void BuscarCliente()
     {
         clientesEncontrados = ObtenerClientes(criterioBusqueda);
         if (clientesEncontrados.Any())
         {
-            usuarioSeleccionado = null;
+            clienteSeleccionado = null;
         }
     }
 
     private void OnSeleccionarCliente(ChangeEventArgs e)
     {
         var clienteId = Convert.ToInt32(e.Value);
-        usuarioSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id == clienteId);
+        clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id == clienteId);
     }
 
     private bool MembresiaCercaDeCaducar(DateTime fechaExpiracion)
     {
-        return (fechaExpiracion - DateTime.Now).Days <= 5;
+        return (fechaExpiracion - DateTime.Now).Days <= 15;
     }
 
     private void RenovarMembresia(int dias)
     {
-        if (usuarioSeleccionado != null)
+        if (clienteSeleccionado != null)
         {
-            usuarioSeleccionado.FechaExpiracion = DateTime.Now.AddDays(dias);
+            clienteSeleccionado.FechaExpiracion = DateTime.Now.AddDays(dias);
             Console.WriteLine($"Membresía renovada por {dias} días.");
         }
     }
 
-    private List<Usuario> ObtenerClientes(string criterioBusqueda)
+    private List<Cliente> ObtenerClientes(string criterioBusqueda)
     {
-        return new List<Usuario>
+        return new List<Cliente>
         {
-            new Usuario { Id = 1, Nombre = "Juan Pérez", PlanActual = "Mensual", FechaExpiracion = DateTime.Now.AddDays(10) },
-            new Usuario { Id = 2, Nombre = "María López", PlanActual = "Anual", FechaExpiracion = DateTime.Now.AddDays(40) }
+            new Cliente { Id = 1, Nombre = "Juan Pérez", PlanActual = "Mensual", FechaExpiracion = DateTime.Now.AddDays(10) },
+            new Cliente { Id = 2, Nombre = "María López", PlanActual = "Anual", FechaExpiracion = DateTime.Now.AddDays(40) }
         }.Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id.ToString() == criterioBusqueda).ToList();
     }
 }
