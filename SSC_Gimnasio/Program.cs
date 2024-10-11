@@ -5,6 +5,8 @@ using SSC_Gimnasio.Components;
 using SSC_Gimnasio.Modelos;
 using SSC_Gimnasio;
 using KristofferStrube.Blazor.MediaCaptureStreams;
+using SSC_Gimnasio.Repositorio;
+using SSC_Gimnasio.Repositorios;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddMediaDevicesService();
+builder.Services.AddScoped<IRepositorioClientes, RepositorioClientes>();
+builder.Services.AddScoped<IRepositorioVisitas, RepositorioVisitas>();
 builder.Services.AddDbContext<GymnasioDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SSC_GimnasioContext")));
 
