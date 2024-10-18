@@ -57,9 +57,9 @@
 
 @code {
     private Clientes cliente = new Clientes();
-    private EditContext editContext; // Para manejar el contexto del formulario
-    private string mensaje;
-    private string error;
+    private EditContext ?editContext; // Para manejar el contexto del formulario
+    private string ?mensaje;
+    private string ?error;
 
     protected override void OnInitialized()
     {
