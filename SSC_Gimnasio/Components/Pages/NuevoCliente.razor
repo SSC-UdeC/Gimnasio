@@ -1,13 +1,15 @@
 ﻿@page "/NuevoCliente"
 @using System.ComponentModel.DataAnnotations
 @using SSC_Gimnasio.Modelos
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
 <h3 class="text-center my-4">Registro de Nuevo Cliente</h3>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <EditForm Model="@cliente" OnValidSubmit="@RegistrarCliente">
+            <!-- Usamos EditForm con EditContext para mejorar la gestión del formulario -->
+            <EditForm EditContext="@editContext" OnValidSubmit="@RegistrarCliente" FormName="nuevoClienteForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -39,15 +41,43 @@
                     <button type="submit" class="btn btn-primary">Registrar Cliente</button>
                 </div>
             </EditForm>
+
+            @if (!string.IsNullOrEmpty(mensaje))
+            {
+                <div class="alert alert-success mt-3">@mensaje</div>
+            }
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger mt-3">@error</div>
+            }
         </div>
     </div>
 </div>
 
 @code {
     private Clientes cliente = new Clientes();
+    private EditContext editContext; // Para manejar el contexto del formulario
+    private string mensaje;
+    private string error;
 
-    private void RegistrarCliente()
+    protected override void OnInitialized()
     {
-        // Se añadirá la lógica para la base de datos más adelante
+        editContext = new EditContext(cliente); // Inicializar el contexto con el modelo
+    }
+
+    private async Task RegistrarCliente()
+    {
+        try
+        {
+            await repositorioClientes.Add(cliente); // Añadir el cliente
+            mensaje = "Cliente registrado exitosamente.";
+            cliente = new Clientes(); // Limpiar el formulario
+            editContext = new EditContext(cliente); // Resetear el contexto para el nuevo cliente
+        }
+        catch (Exception ex)
+        {
+            error = $"Error al registrar el cliente: {ex.Message}";
+        }
     }
 }
