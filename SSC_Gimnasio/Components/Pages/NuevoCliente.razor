@@ -1,5 +1,4 @@
 ﻿@page "/NuevoCliente"
-@using System.ComponentModel.DataAnnotations
 @using SSC_Gimnasio.Modelos
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
@@ -8,33 +7,25 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <!-- Usamos EditForm con EditContext para mejorar la gestión del formulario -->
-            <EditForm EditContext="@editContext" OnValidSubmit="@RegistrarCliente" FormName="nuevoClienteForm">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
+            <EditForm Model="@cliente" OnValidSubmit="@RegistrarCliente">
                 <div class="form-group mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
                     <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
-                    <ValidationMessage For="@(() => cliente.Nombre)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="correo" class="form-label">Correo</label>
                     <InputText id="correo" type="email" class="form-control" @bind-Value="cliente.Email" />
-                    <ValidationMessage For="@(() => cliente.Email)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="telefono" class="form-label">Teléfono</label>
                     <InputText id="telefono" class="form-control" @bind-Value="cliente.Telefono" />
-                    <ValidationMessage For="@(() => cliente.Telefono)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-4">
                     <label for="telefonoEmergencia" class="form-label">Teléfono de Emergencia</label>
                     <InputText id="telefonoEmergencia" class="form-control" @bind-Value="cliente.Telefono_Emergencia" />
-                    <ValidationMessage For="@(() => cliente.Telefono_Emergencia)" class="text-danger" />
                 </div>
 
                 <div class="d-grid">
@@ -57,23 +48,16 @@
 
 @code {
     private Clientes cliente = new Clientes();
-    private EditContext ?editContext; // Para manejar el contexto del formulario
-    private string ?mensaje;
-    private string ?error;
-
-    protected override void OnInitialized()
-    {
-        editContext = new EditContext(cliente); // Inicializar el contexto con el modelo
-    }
+    private string? mensaje;
+    private string? error;
 
     private async Task RegistrarCliente()
     {
         try
         {
-            await repositorioClientes.Add(cliente); // Añadir el cliente
-            mensaje = "Cliente registrado exitosamente.";
-            cliente = new Clientes(); // Limpiar el formulario
-            editContext = new EditContext(cliente); // Resetear el contexto para el nuevo cliente
+            var clienteGuardado = await repositorioClientes.Add(cliente);
+            mensaje = $"Cliente registrado exitosamente. ID: {clienteGuardado.Id_Cliente}";
+            cliente = new Clientes(); // Limpiar el modelo para el nuevo registro
         }
         catch (Exception ex)
         {
