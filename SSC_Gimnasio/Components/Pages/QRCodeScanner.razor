@@ -1,4 +1,4 @@
-﻿@page "/qrscanner"
+﻿@page "/qr"
 @using ZXing
 @using ZXing.Common
 @inject IJSRuntime JS
@@ -14,7 +14,7 @@
 }
 
 @code {
-    private string scannedResult;
+    private string ?scannedResult;
 
     private async Task StartScanning()
     {

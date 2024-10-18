@@ -45,7 +45,7 @@
 @code {
     private string criterioBusqueda { get; set; } = string.Empty; // Inicializa el modelo como un string vacío
     private List<Clientes> clientesEncontrados = new List<Clientes>();
-    private Clientes clienteSeleccionado;
+    private Clientes ?clienteSeleccionado;
 
     private async Task BuscarCliente()
     {
