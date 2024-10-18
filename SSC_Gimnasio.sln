@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSC_Gimnasio", "SSC_Gimnasio\SSC_Gimnasio.csproj", "{F6385B5D-FCB7-48AB-B8FF-09F3908623E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSC_Gimnasio", "SSC_Gimnasio\SSC_Gimnasio.csproj", "{F6385B5D-FCB7-48AB-B8FF-09F3908623E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSC_Gimnasio.Client", "SSC_Gimnasio.Client\SSC_Gimnasio.Client.csproj", "{DBBA10E1-9D8F-43C6-89A5-899A86B1B48A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSC_Gimnasio.Client", "SSC_Gimnasio.Client\SSC_Gimnasio.Client.csproj", "{DBBA10E1-9D8F-43C6-89A5-899A86B1B48A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
