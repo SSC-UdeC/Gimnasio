@@ -1,31 +1,40 @@
-﻿@page "/NuevoCliente"
+﻿@page "/registrar-cliente"
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
 @using SSC_Gimnasio.Modelos
-@inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <h3 class="text-center my-4">Registro de Nuevo Cliente</h3>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <EditForm Model="@cliente" OnValidSubmit="@RegistrarCliente">
+            <EditForm EditContext="@editContext" OnValidSubmit="@RegistrarCliente" FormName="nuevoClienteForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
                 <div class="form-group mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
                     <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
+                    <ValidationMessage For="@(() => cliente.Nombre)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="correo" class="form-label">Correo</label>
                     <InputText id="correo" type="email" class="form-control" @bind-Value="cliente.Email" />
+                    <ValidationMessage For="@(() => cliente.Email)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="telefono" class="form-label">Teléfono</label>
                     <InputText id="telefono" class="form-control" @bind-Value="cliente.Telefono" />
+                    <ValidationMessage For="@(() => cliente.Telefono)" class="text-danger" />
                 </div>
 
                 <div class="form-group mb-4">
                     <label for="telefonoEmergencia" class="form-label">Teléfono de Emergencia</label>
                     <InputText id="telefonoEmergencia" class="form-control" @bind-Value="cliente.Telefono_Emergencia" />
+                    <ValidationMessage For="@(() => cliente.Telefono_Emergencia)" class="text-danger" />
                 </div>
 
                 <div class="d-grid">
@@ -48,16 +57,23 @@
 
 @code {
     private Clientes cliente = new Clientes();
-    private string? mensaje;
-    private string? error;
+    private EditContext editContext; 
+    private string mensaje;
+    private string error;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(cliente); 
+    }
 
     private async Task RegistrarCliente()
     {
         try
         {
-            var clienteGuardado = await repositorioClientes.Add(cliente);
-            mensaje = $"Cliente registrado exitosamente. ID: {clienteGuardado.Id_Cliente}";
-            cliente = new Clientes(); // Limpiar el modelo para el nuevo registro
+            await RepositorioClientes.Add(cliente); 
+            mensaje = "Cliente registrado exitosamente.";
+            await Task.Delay(2500); 
+            Navigation.NavigateTo("/renovacion");
         }
         catch (Exception ex)
         {
