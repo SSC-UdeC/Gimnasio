@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Components\Pages\QRCodeScanner.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="KristofferStrube.Blazor.MediaCaptureStreams" Version="0.3.0" />
     <ProjectReference Include="..\SSC_Gimnasio.Client\SSC_Gimnasio.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.1" />
@@ -24,18 +20,6 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     <PackageReference Include="ZXing.Net" Version="0.16.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Pages\QRCodeScanner.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Pages\QRCodeScanner.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Components\Pages\QRCodeScanner.razor" />
   </ItemGroup>
 
 </Project>
