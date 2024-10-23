@@ -20,7 +20,7 @@ builder.Services.AddMediaDevicesService();
 builder.Services.AddScoped<IRepositorioClientes, RepositorioClientes>();
 builder.Services.AddScoped<IRepositorioVisitas, RepositorioVisitas>();
 builder.Services.AddDbContext<GymnasioDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SSC_GimnasioContext")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConecction")));
 
 var app = builder.Build();
 

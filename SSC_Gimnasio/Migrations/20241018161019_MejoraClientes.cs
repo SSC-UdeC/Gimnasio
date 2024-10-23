@@ -5,7 +5,7 @@
 namespace SSC_Gimnasio.Migrations
 {
     /// <inheritdoc />
-    public partial class actualizacion : Migration
+    public partial class MejoraClientes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
