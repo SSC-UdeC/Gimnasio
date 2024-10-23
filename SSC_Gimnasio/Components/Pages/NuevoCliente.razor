@@ -1,14 +1,14 @@
-﻿@page "/NuevoCliente"
-@using System.ComponentModel.DataAnnotations
+﻿@page "/registrar-cliente"
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
 @using SSC_Gimnasio.Modelos
-@inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <h3 class="text-center my-4">Registro de Nuevo Cliente</h3>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <!-- Usamos EditForm con EditContext para mejorar la gestión del formulario -->
             <EditForm EditContext="@editContext" OnValidSubmit="@RegistrarCliente" FormName="nuevoClienteForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -57,23 +57,23 @@
 
 @code {
     private Clientes cliente = new Clientes();
-    private EditContext editContext; // Para manejar el contexto del formulario
+    private EditContext editContext; 
     private string mensaje;
     private string error;
 
     protected override void OnInitialized()
     {
-        editContext = new EditContext(cliente); // Inicializar el contexto con el modelo
+        editContext = new EditContext(cliente); 
     }
 
     private async Task RegistrarCliente()
     {
         try
         {
-            await repositorioClientes.Add(cliente); // Añadir el cliente
+            await RepositorioClientes.Add(cliente); 
             mensaje = "Cliente registrado exitosamente.";
-            cliente = new Clientes(); // Limpiar el formulario
-            editContext = new EditContext(cliente); // Resetear el contexto para el nuevo cliente
+            await Task.Delay(2500); 
+            Navigation.NavigateTo("/renovacion");
         }
         catch (Exception ex)
         {

@@ -21,5 +21,4 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     <PackageReference Include="ZXing.Net" Version="0.16.9" />
   </ItemGroup>
-
 </Project>

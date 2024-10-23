@@ -12,8 +12,8 @@ using SSC_Gimnasio.Modelos;
 namespace SSC_Gimnasio.Migrations
 {
     [DbContext(typeof(GymnasioDBContext))]
-    [Migration("20241011140627_inicial")]
-    partial class inicial
+    [Migration("20241018161019_MejoraClientes")]
+    partial class MejoraClientes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
