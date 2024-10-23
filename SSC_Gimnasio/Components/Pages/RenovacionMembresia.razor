@@ -1,6 +1,7 @@
 ﻿@page "/renovacion"
 @using System.ComponentModel.DataAnnotations
 @using SSC_Gimnasio.Modelos
+@rendermode InteractiveServer
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
 <h1>Renovación de Membresía</h1>
@@ -28,9 +29,6 @@
         <p>Cliente: @clienteSeleccionado.Nombre</p>
         <p>Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
     </div>
-
-    @if (MembresiaCercaDeCaducar(clienteSeleccionado.Fecha_Vencimiento))
-    {
         <div>
             <p>Seleccione un nuevo plan:</p>
             <button @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
@@ -38,12 +36,11 @@
             <button @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
             <button @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
             <button @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
-        </div>
-    }
+        </div>  
 }
 
 @code {
-    private string criterioBusqueda { get; set; } = string.Empty; // Inicializa el modelo como un string vacío
+    private string criterioBusqueda { get; set; } = string.Empty; 
     private List<Clientes> clientesEncontrados = new List<Clientes>();
     private Clientes ?clienteSeleccionado;
 
@@ -56,7 +53,7 @@
                 .Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id_Cliente.ToString() == criterioBusqueda)
                 .ToList();
 
-            clienteSeleccionado = null; // Limpiar selección previa
+            clienteSeleccionado = null;
         }
     }
 
@@ -66,16 +63,11 @@
         clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id_Cliente == clienteId);
     }
 
-    private bool MembresiaCercaDeCaducar(DateTime fechaExpiracion)
-    {
-        return (fechaExpiracion - DateTime.Now).Days <= 15;
-    }
-
     private async Task RenovarMembresia(int dias)
     {
         if (clienteSeleccionado != null)
         {
-            clienteSeleccionado.Fecha_Vencimiento = DateTime.Now.AddDays(dias);
+            clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(dias);
             await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
             Console.WriteLine($"Membresía renovada por {dias} días.");
         }
