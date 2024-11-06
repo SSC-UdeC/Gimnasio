@@ -1,42 +1,40 @@
 ﻿@page "/"
-@using ZXing
-@using ZXing.Common
-@using SixLabors.ImageSharp
-@using SixLabors.ImageSharp.PixelFormats
-@using SixLabors.ImageSharp.Formats.Png
-@using SixLabors.ImageSharp.Processing
+@using QRCoder
+@rendermode InteractiveServer
 @using System.IO
 
 <h3>Generar y Mostrar Código QR</h3>
 
-<img src="@qrCodeImage" alt="QR Code" />
+<input @bind="qrText" placeholder="Ingresa el texto para el QR" class="form-control mb-2" />
 
-<button class="btn btn-primary">Bootstrap Button</button>
+@if (qrCodeImage != null)
+{
+    <img src="@qrCodeImage" alt="QR Code" />
+}
 
+<button class="btn btn-primary" @onclick="GenerateQRCode">Generar Código QR</button>
 
 @code {
-    private string ?qrCodeImage;
+    private string qrText = string.Empty;
+    private string? qrCodeImage;
 
-    protected override void OnInitialized()
+    private void GenerateQRCode()
     {
-
-        var barcodeWriter = new BarcodeWriterPixelData
-            {
-                Format = BarcodeFormat.QR_CODE,
-                Options = new EncodingOptions
-                {
-                    Width = 200,
-                    Height = 200
-                }
-            };
-
-        var pixelData = barcodeWriter.Write("Hola.com");
-
-        using (var image = Image.LoadPixelData<Rgba32>(pixelData.Pixels, pixelData.Width, pixelData.Height))
+        if (string.IsNullOrWhiteSpace(qrText))
         {
-            using var memoryStream = new MemoryStream();
-            image.Save(memoryStream, new PngEncoder()); 
-            qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+            return; // No generar el QR si el texto está vacío
+        }
+
+        // Usar QRCoder para generar el código QR
+        using (var qrGenerator = new QRCodeGenerator())
+        using (var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q))
+        using (var qrCode = new PngByteQRCode(qrCodeData))
+        {
+            // Generar el código QR como un arreglo de bytes
+            byte[] qrCodeImageBytes = qrCode.GetGraphic(20); // El número 20 es el tamaño de los módulos
+
+            // Convertir el arreglo de bytes a una cadena Base64 para mostrarlo en el navegador
+            qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImageBytes)}";
         }
     }
 }
