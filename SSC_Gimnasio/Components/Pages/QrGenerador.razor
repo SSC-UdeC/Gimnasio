@@ -22,18 +22,15 @@
     {
         if (string.IsNullOrWhiteSpace(qrText))
         {
-            return; // No generar el QR si el texto está vacío
+            return; 
         }
 
-        // Usar QRCoder para generar el código QR
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new PngByteQRCode(qrCodeData))
         {
-            // Generar el código QR como un arreglo de bytes
-            byte[] qrCodeImageBytes = qrCode.GetGraphic(20); // El número 20 es el tamaño de los módulos
+            byte[] qrCodeImageBytes = qrCode.GetGraphic(20); 
 
-            // Convertir el arreglo de bytes a una cadena Base64 para mostrarlo en el navegador
             qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImageBytes)}";
         }
     }
