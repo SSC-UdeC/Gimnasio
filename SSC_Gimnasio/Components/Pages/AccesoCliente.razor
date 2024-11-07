@@ -1,0 +1,39 @@
+﻿@page "/acceso-cliente"
+@inject IJSRuntime JS
+@using ZXing
+@using System.Drawing
+
+<h3>Escaneo de QR para Acceso al Cliente</h3>
+
+<div class="qr-scanner">
+    <video id="video" autoplay></video>
+</div>
+
+<button class="btn btn-primary" @onclick="StartScan">Iniciar Escaneo</button>
+<div class="mt-3">
+    <p><strong>Nombre:</strong> @nombreCliente</p>
+    <p><strong>Teléfono:</strong> @telefonoCliente</p>
+    <p><strong>Expiración de Membresía:</strong> @expiracionMembresia</p>
+</div>
+
+@code {
+    private string nombreCliente = "N/A";
+    private string telefonoCliente = "N/A";
+    private string expiracionMembresia = "N/A";
+
+    private async Task StartScan()
+    {
+        // Llama al método JS para iniciar la cámara
+        await JS.InvokeVoidAsync("startCamera");
+    }
+
+    [JSInvokable]
+    public void ProcesarQR(string qrText)
+    {
+        // Aquí procesa el texto del QR para obtener información del cliente.
+        // Simularemos los datos por ahora.
+        nombreCliente = "Juan Pérez";
+        telefonoCliente = "555-1234";
+        expiracionMembresia = "15/12/2024";
+    }
+}
