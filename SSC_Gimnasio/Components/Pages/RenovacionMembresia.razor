@@ -4,56 +4,124 @@
 @rendermode InteractiveServer
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
-<h1>Renovación de Membresía</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Renovación de Membresía</h1>
 
-<EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
-    <div>
-        <InputText id="buscar" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
-        <button type="submit">Buscar</button>
-    </div>
-</EditForm>
+    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
+        <div class="input-group mb-3">
+            <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </EditForm>
 
-@if (clientesEncontrados != null && clientesEncontrados.Any())
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @mensajeError
+        </div>
+    }
+
+    @if (clientesEncontrados != null && clientesEncontrados.Any())
+    {
+        <div class="mb-3">
+            <select class="form-select" @onchange="OnSeleccionarCliente">
+                <option value="">Seleccione un cliente</option>
+                @foreach (var cliente in clientesEncontrados)
+                {
+                    <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
+                }
+            </select>
+        </div>
+    }
+    else if (busquedaRealizada && !clientesEncontrados.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            No se encontraron clientes con el criterio de búsqueda proporcionado.
+        </div>
+    }
+
+    @if (clienteSeleccionado != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Cliente: @clienteSeleccionado.Nombre</h5>
+                <p class="card-text">Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p class="fw-bold">Seleccione un nuevo plan:</p>
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(7)">Semanal (7 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(30)">Mensual (30 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(90)">Trimestral (90 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(180)">Semestral (180 días)</button>
+                <button class="btn btn-outline-primary" @onclick="() => MostrarConfirmacion(365)">Anual (365 días)</button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal de confirmación -->
+@if (mostrarModal)
 {
-    <select @onchange="OnSeleccionarCliente">
-        @foreach (var cliente in clientesEncontrados)
-        {
-            <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
-        }
-    </select>
-}
-
-@if (clienteSeleccionado != null)
-{
-    <div>
-        <p>Cliente: @clienteSeleccionado.Nombre</p>
-        <p>Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+    <div class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1" aria-labelledby="confirmacionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmacionModalLabel">Confirmar renovación</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea renovar la membresía por @diasRenovacion días?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @onclick="ConfirmarRenovacion">Confirmar</button>
+                </div>
+            </div>
+        </div>
     </div>
-        <div>
-            <p>Seleccione un nuevo plan:</p>
-            <button @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
-            <button @onclick="() => RenovarMembresia(30)">Mensual (30 días)</button>
-            <button @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
-            <button @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
-            <button @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
-        </div>  
 }
 
 @code {
-    private string criterioBusqueda { get; set; } = string.Empty; 
+    private string criterioBusqueda { get; set; } = string.Empty;
     private List<Clientes> clientesEncontrados = new List<Clientes>();
-    private Clientes ?clienteSeleccionado;
+    private Clientes? clienteSeleccionado;
+    private int diasRenovacion;
+    private bool mostrarModal = false;
+    private bool busquedaRealizada = false;
+    private string mensajeError = string.Empty;
 
     private async Task BuscarCliente()
     {
-        if (!string.IsNullOrWhiteSpace(criterioBusqueda))
+        mensajeError = string.Empty; // Limpiar mensajes de error anteriores
+        busquedaRealizada = false;
+
+        if (string.IsNullOrWhiteSpace(criterioBusqueda))
+        {
+            mensajeError = "Por favor, ingrese un criterio de búsqueda.";
+            return;
+        }
+
+        try
         {
             var todosClientes = await repositorioClientes.GetAll();
             clientesEncontrados = todosClientes
                 .Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id_Cliente.ToString() == criterioBusqueda)
                 .ToList();
 
-            clienteSeleccionado = null;
+            busquedaRealizada = true;
+
+            if (!clientesEncontrados.Any())
+            {
+                mensajeError = "No se encontraron clientes con el criterio de búsqueda proporcionado.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = "Ocurrió un error al buscar clientes. Por favor, intente nuevamente.";
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 
@@ -63,13 +131,34 @@
         clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id_Cliente == clienteId);
     }
 
-    private async Task RenovarMembresia(int dias)
+    private void MostrarConfirmacion(int dias)
+    {
+        diasRenovacion = dias;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+    }
+
+    private async Task ConfirmarRenovacion()
     {
         if (clienteSeleccionado != null)
         {
-            clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(dias);
-            await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
-            Console.WriteLine($"Membresía renovada por {dias} días.");
+            try
+            {
+                clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(diasRenovacion);
+                await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
+                Console.WriteLine($"Membresía renovada por {diasRenovacion} días.");
+            }
+            catch (Exception ex)
+            {
+                mensajeError = "Ocurrió un error al renovar la membresía. Por favor, intente nuevamente.";
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
+
+        mostrarModal = false;
     }
 }
