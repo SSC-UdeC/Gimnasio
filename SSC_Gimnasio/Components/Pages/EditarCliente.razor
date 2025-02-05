@@ -58,24 +58,18 @@
 @code {
     [Parameter] public int Id { get; set; }
     private Clientes cliente = new Clientes();
-    // Inicializamos el EditContext con un objeto cliente vacío
-    private EditContext editContext;
+    private EditContext editContext = null!;
     private string mensaje;
     private string error;
 
     protected override async Task OnInitializedAsync()
     {
-        // Se inicializa el editContext si aún es null.
-        if (editContext == null)
-        {
-            editContext = new EditContext(cliente);
-        }
+        editContext = new EditContext(cliente);
 
         var clienteDb = await RepositorioClientes.Get(Id);
         if (clienteDb != null)
         {
             cliente = clienteDb;
-            // Se actualiza el EditContext con el cliente obtenido.
             editContext = new EditContext(cliente);
         }
         else
