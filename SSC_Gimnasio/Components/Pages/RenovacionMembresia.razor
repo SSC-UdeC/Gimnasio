@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Renovación de Membresía</h1>
 
-    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
+    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">x
         <div class="input-group mb-3">
             <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
             <button type="submit" class="btn btn-primary">Buscar</button>
@@ -39,20 +39,44 @@
         <div class="mb-3">
             <p class="fw-bold">Seleccione un nuevo plan:</p>
             <div class="d-grid gap-2 d-md-block">
-                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(30)">Mensual (30 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
-                <button class="btn btn-outline-primary" @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(7)">Semanal (7 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(30)">Mensual (30 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(90)">Trimestral (90 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(180)">Semestral (180 días)</button>
+                <button class="btn btn-outline-primary" @onclick="() => MostrarConfirmacion(365)">Anual (365 días)</button>
             </div>
         </div>
     }
 </div>
 
+<!-- Modal de confirmación -->
+@if (mostrarModal)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1" aria-labelledby="confirmacionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmacionModalLabel">Confirmar renovación</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea renovar la membresía por @diasRenovacion días?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @onclick="ConfirmarRenovacion">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private string criterioBusqueda { get; set; } = string.Empty;
     private List<Clientes> clientesEncontrados = new List<Clientes>();
     private Clientes? clienteSeleccionado;
+    private int diasRenovacion;
+    private bool mostrarModal = false;
 
     private async Task BuscarCliente()
     {
@@ -73,13 +97,26 @@
         clienteSeleccionado = clientesEncontrados.FirstOrDefault(c => c.Id_Cliente == clienteId);
     }
 
-    private async Task RenovarMembresia(int dias)
+    private void MostrarConfirmacion(int dias)
+    {
+        diasRenovacion = dias;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+    }
+
+    private async Task ConfirmarRenovacion()
     {
         if (clienteSeleccionado != null)
         {
-            clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(dias);
+            clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(diasRenovacion);
             await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
-            Console.WriteLine($"Membresía renovada por {dias} días.");
+            Console.WriteLine($"Membresía renovada por {diasRenovacion} días.");
         }
+
+        mostrarModal = false;
     }
 }
