@@ -33,11 +33,18 @@
                         <td>@cliente.Fecha_Registro.ToShortDateString()</td>
                         <td>
                             <button class="btn btn-primary btn-sm" @onclick="() => ConfirmarEdicion(cliente.Id_Cliente)">
-                                <i class="bi bi-pencil"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-4 1a.5.5 0 0 1-.632-.632l1-4a.5.5 0 0 1 .11-.168l10-10zM11.207 3L3 11.207V13h1.793L13 4.793 11.207 3zm1.586-1L14 3.207 12.207 5 10.793 3.793 12.793 1h.293zM1 13.5V16h2.5l9.854-9.854-2.5-2.5L1 13.5z" />
+                                </svg>
                             </button>
+
                             <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminacion(cliente.Id_Cliente)">
-                                <i class="bi bi-trash"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M5.5 5a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V5.5a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V5.5a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0V12a.5.5 0 0 0 1 0V5.5z" />
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4 4v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4H4z" />
+                                </svg>
                             </button>
+
                         </td>
                     </tr>
                 }

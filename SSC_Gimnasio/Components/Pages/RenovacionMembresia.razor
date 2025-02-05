@@ -28,7 +28,7 @@
                 <option value="">Seleccione un cliente</option>
                 @foreach (var cliente in clientesEncontrados)
                 {
-                    <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
+                    <option value="@cliente.Id_Cliente">Cliente: @cliente.Id_Cliente - @cliente.Nombre</option>
                 }
             </select>
         </div>
@@ -62,7 +62,6 @@
     }
 </div>
 
-<!-- Modal de confirmación -->
 @if (mostrarModal)
 {
     <div class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);" tabindex="-1" aria-labelledby="confirmacionModalLabel" aria-hidden="true">
@@ -95,7 +94,7 @@
 
     private async Task BuscarCliente()
     {
-        mensajeError = string.Empty; // Limpiar mensajes de error anteriores
+        mensajeError = string.Empty; 
         busquedaRealizada = false;
 
         if (string.IsNullOrWhiteSpace(criterioBusqueda))

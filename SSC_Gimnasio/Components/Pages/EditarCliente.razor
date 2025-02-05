@@ -58,14 +58,12 @@
 @code {
     [Parameter] public int Id { get; set; }
     private Clientes cliente = new Clientes();
-    // Inicializamos el EditContext con un objeto cliente vacío
     private EditContext editContext;
     private string mensaje;
     private string error;
 
     protected override async Task OnInitializedAsync()
     {
-        // Se inicializa el editContext si aún es null.
         if (editContext == null)
         {
             editContext = new EditContext(cliente);
@@ -75,7 +73,6 @@
         if (clienteDb != null)
         {
             cliente = clienteDb;
-            // Se actualiza el EditContext con el cliente obtenido.
             editContext = new EditContext(cliente);
         }
         else
