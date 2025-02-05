@@ -7,12 +7,19 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Renovación de Membresía</h1>
 
-    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">x
+    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
         <div class="input-group mb-3">
             <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
             <button type="submit" class="btn btn-primary">Buscar</button>
         </div>
     </EditForm>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @mensajeError
+        </div>
+    }
 
     @if (clientesEncontrados != null && clientesEncontrados.Any())
     {
@@ -24,6 +31,12 @@
                     <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
                 }
             </select>
+        </div>
+    }
+    else if (busquedaRealizada && !clientesEncontrados.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            No se encontraron clientes con el criterio de búsqueda proporcionado.
         </div>
     }
 
@@ -77,17 +90,38 @@
     private Clientes? clienteSeleccionado;
     private int diasRenovacion;
     private bool mostrarModal = false;
+    private bool busquedaRealizada = false;
+    private string mensajeError = string.Empty;
 
     private async Task BuscarCliente()
     {
-        if (!string.IsNullOrWhiteSpace(criterioBusqueda))
+        mensajeError = string.Empty; // Limpiar mensajes de error anteriores
+        busquedaRealizada = false;
+
+        if (string.IsNullOrWhiteSpace(criterioBusqueda))
+        {
+            mensajeError = "Por favor, ingrese un criterio de búsqueda.";
+            return;
+        }
+
+        try
         {
             var todosClientes = await repositorioClientes.GetAll();
             clientesEncontrados = todosClientes
                 .Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id_Cliente.ToString() == criterioBusqueda)
                 .ToList();
 
-            clienteSeleccionado = null;
+            busquedaRealizada = true;
+
+            if (!clientesEncontrados.Any())
+            {
+                mensajeError = "No se encontraron clientes con el criterio de búsqueda proporcionado.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = "Ocurrió un error al buscar clientes. Por favor, intente nuevamente.";
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 
@@ -112,9 +146,17 @@
     {
         if (clienteSeleccionado != null)
         {
-            clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(diasRenovacion);
-            await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
-            Console.WriteLine($"Membresía renovada por {diasRenovacion} días.");
+            try
+            {
+                clienteSeleccionado.Fecha_Vencimiento = clienteSeleccionado.Fecha_Vencimiento.AddDays(diasRenovacion);
+                await repositorioClientes.Update(clienteSeleccionado.Id_Cliente, clienteSeleccionado);
+                Console.WriteLine($"Membresía renovada por {diasRenovacion} días.");
+            }
+            catch (Exception ex)
+            {
+                mensajeError = "Ocurrió un error al renovar la membresía. Por favor, intente nuevamente.";
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
         mostrarModal = false;
