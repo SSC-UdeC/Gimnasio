@@ -4,45 +4,55 @@
 @rendermode InteractiveServer
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
 
-<h1>Renovación de Membresía</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Renovación de Membresía</h1>
 
-<EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
-    <div>
-        <InputText id="buscar" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
-        <button type="submit">Buscar</button>
-    </div>
-</EditForm>
+    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
+        <div class="input-group mb-3">
+            <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </EditForm>
 
-@if (clientesEncontrados != null && clientesEncontrados.Any())
-{
-    <select @onchange="OnSeleccionarCliente">
-        @foreach (var cliente in clientesEncontrados)
-        {
-            <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
-        }
-    </select>
-}
+    @if (clientesEncontrados != null && clientesEncontrados.Any())
+    {
+        <div class="mb-3">
+            <select class="form-select" @onchange="OnSeleccionarCliente">
+                <option value="">Seleccione un cliente</option>
+                @foreach (var cliente in clientesEncontrados)
+                {
+                    <option value="@cliente.Id_Cliente">@cliente.Nombre</option>
+                }
+            </select>
+        </div>
+    }
 
-@if (clienteSeleccionado != null)
-{
-    <div>
-        <p>Cliente: @clienteSeleccionado.Nombre</p>
-        <p>Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
-    </div>
-        <div>
-            <p>Seleccione un nuevo plan:</p>
-            <button @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
-            <button @onclick="() => RenovarMembresia(30)">Mensual (30 días)</button>
-            <button @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
-            <button @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
-            <button @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
-        </div>  
-}
+    @if (clienteSeleccionado != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Cliente: @clienteSeleccionado.Nombre</h5>
+                <p class="card-text">Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p class="fw-bold">Seleccione un nuevo plan:</p>
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(7)">Semanal (7 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(30)">Mensual (30 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(90)">Trimestral (90 días)</button>
+                <button class="btn btn-outline-primary me-2" @onclick="() => RenovarMembresia(180)">Semestral (180 días)</button>
+                <button class="btn btn-outline-primary" @onclick="() => RenovarMembresia(365)">Anual (365 días)</button>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
-    private string criterioBusqueda { get; set; } = string.Empty; 
+    private string criterioBusqueda { get; set; } = string.Empty;
     private List<Clientes> clientesEncontrados = new List<Clientes>();
-    private Clientes ?clienteSeleccionado;
+    private Clientes? clienteSeleccionado;
 
     private async Task BuscarCliente()
     {
