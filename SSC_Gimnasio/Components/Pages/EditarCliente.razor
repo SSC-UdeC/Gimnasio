@@ -1,0 +1,93 @@
+﻿@page "/editar-cliente/{id:int}"
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
+@inject NavigationManager Navigation
+@using SSC_Gimnasio.Modelos
+@rendermode InteractiveServer
+
+<h3 class="text-center my-4">Editar Cliente</h3>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <EditForm EditContext="@editContext" OnValidSubmit="@ActualizarCliente">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
+                    <ValidationMessage For="@(() => cliente.Nombre)" class="text-danger" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="correo" class="form-label">Correo</label>
+                    <InputText id="correo" type="email" class="form-control" @bind-Value="cliente.Email" />
+                    <ValidationMessage For="@(() => cliente.Email)" class="text-danger" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <InputText id="telefono" class="form-control" @bind-Value="cliente.Telefono" />
+                    <ValidationMessage For="@(() => cliente.Telefono)" class="text-danger" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="telefonoEmergencia" class="form-label">Teléfono de Emergencia</label>
+                    <InputText id="telefonoEmergencia" class="form-control" @bind-Value="cliente.Telefono_Emergencia" />
+                    <ValidationMessage For="@(() => cliente.Telefono_Emergencia)" class="text-danger" />
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success">Actualizar Cliente</button>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(mensaje))
+            {
+                <div class="alert alert-success mt-3">@mensaje</div>
+            }
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger mt-3">@error</div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Clientes cliente = new Clientes();
+    private EditContext editContext;
+    private string mensaje;
+    private string error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var clienteDb = await RepositorioClientes.Get(Id);
+        if (clienteDb != null)
+        {
+            cliente = clienteDb;
+            editContext = new EditContext(cliente);
+        }
+        else
+        {
+            error = "El cliente no existe.";
+        }
+    }
+
+    private async Task ActualizarCliente()
+    {
+        try
+        {
+            await RepositorioClientes.Update(Id, cliente);
+            mensaje = "Cliente actualizado exitosamente.";
+            await Task.Delay(2500);
+            Navigation.NavigateTo("/ListaClientes");
+        }
+        catch (Exception ex)
+        {
+            error = $"Error al actualizar el cliente: {ex.Message}";
+        }
+    }
+}
