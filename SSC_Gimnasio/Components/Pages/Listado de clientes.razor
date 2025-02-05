@@ -1,0 +1,157 @@
+﻿@page "/ListaClientes"
+@using SSC_Gimnasio.Modelos
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3 class="text-center my-4">Lista de Clientes</h3>
+
+<div class="container">
+    @if (clientes != null && clientes.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Teléfono de Emergencia</th>
+                    <th>Fecha de Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cliente in clientes)
+                {
+                    <tr>
+                        <td>@cliente.Id_Cliente</td>
+                        <td>@cliente.Nombre</td>
+                        <td>@cliente.Email</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@cliente.Telefono_Emergencia</td>
+                        <td>@cliente.Fecha_Registro.ToShortDateString()</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" @onclick="() => ConfirmarEdicion(cliente.Id_Cliente)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminacion(cliente.Id_Cliente)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No hay clientes registrados.</div>
+    }
+</div>
+
+@if (mostrarModalEliminar)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5); z-index:1050;" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEliminarLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalEliminar"></button>
+                </div>
+                <div class="modal-body">
+                    @if (clienteSeleccionadoObj != null)
+                    {
+                        <p>¿Está seguro de que desea eliminar el cliente <strong>@clienteSeleccionadoObj.Nombre</strong>?</p>
+                    }
+                    else
+                    {
+                        <p>¿Está seguro de que desea eliminar este cliente?</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModalEliminar">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @onclick="EliminarClienteConfirmado">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (mostrarModalEditar)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5); z-index:1050;" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditarLabel">Confirmar Edición</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalEditar"></button>
+                </div>
+                <div class="modal-body">
+                    @if (clienteSeleccionadoObj != null)
+                    {
+                        <p>¿Desea editar el cliente <strong>@clienteSeleccionadoObj.Nombre</strong>?</p>
+                    }
+                    else
+                    {
+                        <p>¿Desea editar este cliente?</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModalEditar">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @onclick="EditarClienteConfirmado">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Clientes> clientes = new List<Clientes>();
+    private int clienteSeleccionado;
+    private Clientes clienteSeleccionadoObj;
+    private bool mostrarModalEliminar = false;
+    private bool mostrarModalEditar = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await repositorioClientes.GetAll();
+    }
+
+    private void ConfirmarEliminacion(int id)
+    {
+        clienteSeleccionado = id;
+        clienteSeleccionadoObj = clientes.FirstOrDefault(c => c.Id_Cliente == id);
+        mostrarModalEliminar = true;
+    }
+
+    private async Task EliminarClienteConfirmado()
+    {
+        await repositorioClientes.Delete(clienteSeleccionado);
+        clientes = await repositorioClientes.GetAll();
+        mostrarModalEliminar = false;
+    }
+
+    private void CerrarModalEliminar()
+    {
+        mostrarModalEliminar = false;
+    }
+
+    private void ConfirmarEdicion(int id)
+    {
+        clienteSeleccionado = id;
+        clienteSeleccionadoObj = clientes.FirstOrDefault(c => c.Id_Cliente == id);
+        mostrarModalEditar = true;
+    }
+
+    private void EditarClienteConfirmado()
+    {
+        mostrarModalEditar = false;
+        Navigation.NavigateTo($"/editar-cliente/{clienteSeleccionado}");
+    }
+
+    private void CerrarModalEditar()
+    {
+        mostrarModalEditar = false;
+    }
+}
