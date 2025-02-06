@@ -1,4 +1,4 @@
-﻿@page "/descarga-cliente"
+﻿@page "/descarga-cliente/{ClienteId:int}"
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
 @using SSC_Gimnasio.Modelos
 @using QRCoder
@@ -55,6 +55,6 @@
 
     private void DescargarQR()
     {
-        
+
     }
 }

@@ -57,23 +57,25 @@
 
 @code {
     private Clientes cliente = new Clientes();
-    private EditContext editContext; 
+    private EditContext editContext;
     private string mensaje;
     private string error;
 
     protected override void OnInitialized()
     {
-        editContext = new EditContext(cliente); 
+        editContext = new EditContext(cliente);
     }
 
     private async Task RegistrarCliente()
     {
         try
         {
-            await RepositorioClientes.Add(cliente); 
+            var clienteRegistrado = await RepositorioClientes.Add(cliente);
             mensaje = "Cliente registrado exitosamente.";
-            await Task.Delay(2500); 
-            Navigation.NavigateTo("/descarga-cliente");
+            await Task.Delay(2500);
+
+            // Redirigir a la página de descarga con el ID del cliente
+            Navigation.NavigateTo($"/descarga-cliente/{clienteRegistrado.Id_Cliente}");
         }
         catch (Exception ex)
         {
