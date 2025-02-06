@@ -33,8 +33,4 @@
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\download.js" />
-  </ItemGroup>
-
 </Project>
