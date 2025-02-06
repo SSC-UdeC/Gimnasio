@@ -1,0 +1,60 @@
+﻿@page "/descarga-cliente"
+@inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
+@using SSC_Gimnasio.Modelos
+@using QRCoder
+@using System.IO
+@rendermode InteractiveServer
+
+<h3 class="text-center my-4">Detalles del Cliente</h3>
+
+<div class="container text-center">
+    @if (cliente != null)
+    {
+        <h4>@cliente.Nombre</h4>
+        <p><strong>Correo:</strong> @cliente.Email</p>
+        <p><strong>Teléfono:</strong> @cliente.Telefono</p>
+        <p><strong>Expiración de Membresía:</strong> @cliente.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+
+        @if (qrCodeImage != null)
+        {
+            <img src="@qrCodeImage" alt="QR Code" class="img-fluid mt-3" />
+        }
+
+        <button class="btn btn-primary mt-3" @onclick="DescargarQR">Descargar QR</button>
+    }
+    else
+    {
+        <p class="text-danger">No se encontró el cliente.</p>
+    }
+</div>
+
+@code {
+    [Parameter] public int ClienteId { get; set; }
+    private Clientes? cliente;
+    private string? qrCodeImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await RepositorioClientes.Get(ClienteId);
+        if (cliente != null)
+        {
+            GenerarQRCode(cliente.Id_Cliente.ToString());
+        }
+    }
+
+    private void GenerarQRCode(string qrText)
+    {
+        using (var qrGenerator = new QRCodeGenerator())
+        using (var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q))
+        using (var qrCode = new PngByteQRCode(qrCodeData))
+        {
+            byte[] qrCodeImageBytes = qrCode.GetGraphic(20);
+            qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImageBytes)}";
+        }
+    }
+
+    private void DescargarQR()
+    {
+        
+    }
+}

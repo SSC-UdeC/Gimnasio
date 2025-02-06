@@ -73,7 +73,7 @@
             await RepositorioClientes.Add(cliente); 
             mensaje = "Cliente registrado exitosamente.";
             await Task.Delay(2500); 
-            Navigation.NavigateTo("/renovacion");
+            Navigation.NavigateTo("/descarga-cliente");
         }
         catch (Exception ex)
         {

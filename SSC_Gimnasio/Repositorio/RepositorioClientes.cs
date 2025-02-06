@@ -19,7 +19,6 @@ namespace SSC_Gimnasio.Repositorio
             await _contexto.SaveChangesAsync();
             return cliente;
         }
-
         public async Task Delete(int id)
         {
             var cliente = await _contexto.Clientes.FindAsync(id);
