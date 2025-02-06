@@ -3,6 +3,7 @@
 @using SSC_Gimnasio.Modelos
 @using QRCoder
 @using System.IO
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
 <h3 class="text-center my-4">Detalles del Cliente</h3>
@@ -32,6 +33,7 @@
     [Parameter] public int ClienteId { get; set; }
     private Clientes? cliente;
     private string? qrCodeImage;
+    private byte[]? qrCodeImageBytes;
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,13 +50,17 @@
         using (var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new PngByteQRCode(qrCodeData))
         {
-            byte[] qrCodeImageBytes = qrCode.GetGraphic(20);
+            qrCodeImageBytes = qrCode.GetGraphic(20);
             qrCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImageBytes)}";
         }
     }
 
-    private void DescargarQR()
+    private async Task DescargarQR()
     {
-
+        if (qrCodeImageBytes != null)
+        {
+            string fileName = $"QR_{cliente.Nombre.Replace(" ", "_")}.png";
+            await JSRuntime.InvokeVoidAsync("descargarArchivo", fileName, qrCodeImageBytes);
+        }
     }
 }
