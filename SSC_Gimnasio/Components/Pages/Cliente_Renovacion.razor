@@ -1,65 +1,73 @@
 ﻿@page "/renovacion"
-@using System.ComponentModel.DataAnnotations
 @using SSC_Gimnasio.Modelos
-@rendermode InteractiveServer
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes repositorioClientes
+@rendermode InteractiveServer
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Renovación de Membresía</h1>
+    <h3 class="text-center mb-4">Renovación de Membresía</h3>
 
-    <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
-        <div class="input-group mb-3">
-            <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </div>
-    </EditForm>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-4" style="border-radius: 15px;">
+                <EditForm Model="@criterioBusqueda" OnValidSubmit="BuscarCliente">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-    @if (!string.IsNullOrEmpty(mensajeError))
-    {
-        <div class="alert alert-danger" role="alert">
-            @mensajeError
-        </div>
-    }
+                    <div class="input-group mb-3">
+                        <InputText id="buscar" class="form-control" @bind-Value="criterioBusqueda" placeholder="Buscar cliente por Nombre o ID" />
+                        <button type="submit" class="btn btn-primary" style="border-radius: 10px;">Buscar</button>
+                    </div>
+                </EditForm>
 
-    @if (clientesEncontrados != null && clientesEncontrados.Any())
-    {
-        <div class="mb-3">
-            <select class="form-select" @onchange="OnSeleccionarCliente">
-                <option value="">Seleccione un cliente</option>
-                @foreach (var cliente in clientesEncontrados)
+                @if (!string.IsNullOrEmpty(mensajeError))
                 {
-                    <option value="@cliente.Id_Cliente">Cliente: @cliente.Id_Cliente - @cliente.Nombre</option>
+                    <div class="alert alert-danger" role="alert">
+                        @mensajeError
+                    </div>
                 }
-            </select>
-        </div>
-    }
-    else if (busquedaRealizada && !clientesEncontrados.Any())
-    {
-        <div class="alert alert-warning" role="alert">
-            No se encontraron clientes con el criterio de búsqueda proporcionado.
-        </div>
-    }
 
-    @if (clienteSeleccionado != null)
-    {
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Cliente: @clienteSeleccionado.Nombre</h5>
-                <p class="card-text">Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+                @if (clientesEncontrados != null && clientesEncontrados.Any())
+                {
+                    <div class="form-group mb-3">
+                        <select class="form-select" @onchange="OnSeleccionarCliente" style="border-radius: 10px;">
+                            <option value="">Seleccione un cliente</option>
+                            @foreach (var cliente in clientesEncontrados)
+                            {
+                                <option value="@cliente.Id_Cliente">Cliente: @cliente.Id_Cliente - @cliente.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else if (busquedaRealizada && !clientesEncontrados.Any())
+                {
+                    <div class="alert alert-warning" role="alert">
+                        No se encontraron clientes con el criterio de búsqueda proporcionado.
+                    </div>
+                }
+
+                @if (clienteSeleccionado != null)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Cliente: @clienteSeleccionado.Nombre</h5>
+                            <p class="card-text">Fecha de expiración: @clienteSeleccionado.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="fw-bold">Seleccione un nuevo plan de renovación:</p>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(7)">Semanal (7 días)</button>
+                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(30)">Mensual (30 días)</button>
+                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(90)">Trimestral (90 días)</button>
+                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(180)">Semestral (180 días)</button>
+                            <button class="btn btn-outline-primary" @onclick="() => MostrarConfirmacion(365)">Anual (365 días)</button>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-
-        <div class="mb-3">
-            <p class="fw-bold">Seleccione un nuevo plan:</p>
-            <div class="d-grid gap-2 d-md-block">
-                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(7)">Semanal (7 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(30)">Mensual (30 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(90)">Trimestral (90 días)</button>
-                <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(180)">Semestral (180 días)</button>
-                <button class="btn btn-outline-primary" @onclick="() => MostrarConfirmacion(365)">Anual (365 días)</button>
-            </div>
-        </div>
-    }
+    </div>
 </div>
 
 @if (mostrarModal)
@@ -94,7 +102,7 @@
 
     private async Task BuscarCliente()
     {
-        mensajeError = string.Empty; 
+        mensajeError = string.Empty;
         busquedaRealizada = false;
 
         if (string.IsNullOrWhiteSpace(criterioBusqueda))
