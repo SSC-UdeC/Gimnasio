@@ -56,14 +56,25 @@
 
                     <div class="mb-3">
                         <p class="fw-bold">Seleccione un nuevo plan de renovación:</p>
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(7)">Semanal (7 días)</button>
-                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(30)">Mensual (30 días)</button>
-                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(90)">Trimestral (90 días)</button>
-                            <button class="btn btn-outline-primary me-2" @onclick="() => MostrarConfirmacion(180)">Semestral (180 días)</button>
-                            <button class="btn btn-outline-primary" @onclick="() => MostrarConfirmacion(365)">Anual (365 días)</button>
+                        <div class="d-grid gap-3 d-md-block">
+                            <button class="btn btn-outline-primary rounded-pill" @onclick="() => MostrarConfirmacion(7)" style="border: 2px solid #3498db;">
+                                <i class="bi bi-calendar-week me-2"></i> Semanal (7 días)
+                            </button>
+                            <button class="btn btn-outline-success rounded-pill" @onclick="() => MostrarConfirmacion(30)" style="border: 2px solid #2ecc71;">
+                                <i class="bi bi-calendar-month me-2"></i> Mensual (30 días)
+                            </button>
+                            <button class="btn btn-outline-warning rounded-pill" @onclick="() => MostrarConfirmacion(90)" style="border: 2px solid #f39c12;">
+                                <i class="bi bi-calendar-quarter me-2"></i> Trimestral (90 días)
+                            </button>
+                            <button class="btn btn-outline-info rounded-pill" @onclick="() => MostrarConfirmacion(180)" style="border: 2px solid #1abc9c;">
+                                <i class="bi bi-calendar-fill me-2"></i> Semestral (180 días)
+                            </button>
+                            <button class="btn btn-outline-danger rounded-pill" @onclick="() => MostrarConfirmacion(365)" style="border: 2px solid #e74c3c;">
+                                <i class="bi bi-calendar-check me-2"></i> Anual (365 días)
+                            </button>
                         </div>
                     </div>
+
                 }
             </div>
         </div>
