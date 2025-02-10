@@ -1,23 +1,62 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@* Navbar Superior Estilizada *@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg p-3">
+    <div class="container-fluid">
+        @* Logo y Nombre *@
+        <a class="navbar-brand fw-bold text-light" href="/">
+            <i class="bi bi-lightning-fill me-2"></i> SSC_Gimnasio
+        </a>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        @* Botón de menú para móviles *@
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        @* Elementos de la Navbar *@
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <NavLink class="nav-link text-light fw-semibold px-3" href="/">
+                        <i class="bi bi-house-door-fill me-2"></i> Inicio
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link text-light fw-semibold px-3" href="registrar-cliente">
+                        <i class="bi bi-person-plus-fill me-2"></i> Registro Cliente
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link text-light fw-semibold px-3" href="renovacion">
+                        <i class="bi bi-calendar-check-fill me-2"></i> Renovación
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link text-light fw-semibold px-3" href="ListaClientes">
+                        <i class="bi bi-people-fill me-2"></i> Listado de Clientes
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link text-light fw-semibold px-3" href="QrGenerador">
+                        <i class="bi bi-upc-scan me-2"></i> Generador de QR
+                    </NavLink>
+                </li>
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+@* Contenido Principal *@
+<div class="container mt-4">
+    <article class="content px-4">
+        @Body
+    </article>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+@* Manejo de Errores *@
+<div id="blazor-error-ui" class="alert alert-danger text-center shadow-lg">
+    <strong>Error:</strong> Ha ocurrido un problema inesperado.
+    <a href="" class="reload text-primary fw-bold">Recargar</a>
+    <button class="btn-close dismiss"></button>
 </div>
