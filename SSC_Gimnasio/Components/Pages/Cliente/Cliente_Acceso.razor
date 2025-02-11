@@ -32,6 +32,19 @@
             <p class="text-muted"><strong>Correo:</strong> @cliente.Email</p>
             <p class="text-muted"><strong>Teléfono:</strong> @cliente.Telefono</p>
             <p class="text-muted"><strong>Expiración de Membresía:</strong> @cliente.Fecha_Vencimiento.ToString("dd/MM/yyyy")</p>
+
+            @if (MembresiaExpirada)
+            {
+                <p class="text-danger"><strong>Membresía expirada. Por favor, pase a renovar.</strong></p>
+            }
+            else if (UltimoDiaMembresia)
+            {
+                <p class="text-warning"><strong>Hoy es su último día de membresía. ¡No olvide renovarla!</strong></p>
+            }
+            else
+            {
+                <p class="text-success"><strong>Membresía vigente. ¡Disfrute su entrenamiento!</strong></p>
+            }
         </div>
     }
 
@@ -53,23 +66,34 @@
     private string? error;
     private string? resultado;
 
+    bool MembresiaExpirada => cliente?.Fecha_Vencimiento < DateTime.Today;
+    bool UltimoDiaMembresia => cliente?.Fecha_Vencimiento == DateTime.Today;
+
     private async Task HandleScanResult(string scannedCode)
     {
         if (int.TryParse(scannedCode, out int clientId))
         {
             cliente = await RepositorioClientes.Get(clientId);
-            error = null; 
-            EscaneoExitoso = true;
-            ShowScanBarcode = false;
-            StateHasChanged();
-            await Task.Delay(5000);
-            await JSRuntime.InvokeVoidAsync("location.reload");
+            if (cliente != null)
+            {
+                error = null;
+                EscaneoExitoso = true;
+                ShowScanBarcode = false;
+                StateHasChanged();
+                await Task.Delay(5000);
+                await JSRuntime.InvokeVoidAsync("location.reload");
+            }
+            else
+            {
+                error = "Cliente no encontrado.";
+                cliente = null;
+            }
         }
         else
         {
             error = "Código inválido.";
-            cliente = null; 
-            resultado = null; 
+            cliente = null;
+            resultado = null;
         }
     }
 }
