@@ -96,7 +96,6 @@
             document.Add(title);
             document.Add(new Paragraph($"Período: {fechaInicio:dd/MM/yyyy} - {fechaFin:dd/MM/yyyy}\n\n"));
 
-            // Tabla
             PdfPTable table = new PdfPTable(3) { WidthPercentage = 100 };
             table.SetWidths(new float[] { 1, 3, 2 });
 
@@ -120,9 +119,9 @@
             
             var byteArray = ms.ToArray();
             var base64 = Convert.ToBase64String(byteArray);
-            var fileName = $"Reporte_Visitas_{fechaInicio:ddMMyyyy}_{fechaFin:ddMMyyyy}.pdf";
+            var fileName = $"Reporte_Visitas_{fechaInicio:ddMMyyyy}_{fechaFin:yyyyMMdd}.pdf";
 
-            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, "application/pdf", base64);
+            await JSRuntime.InvokeVoidAsync("descargarArchivoPdf", fileName, "application/pdf", base64);
         }
     }
 }

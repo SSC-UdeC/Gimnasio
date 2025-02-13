@@ -64,7 +64,7 @@
         if (qrCodeImageBytes != null)
         {
             string fileName = $"Llave_QR_{cliente.Nombre.Replace(" ", "_")}.png";
-            await JSRuntime.InvokeVoidAsync("descargarArchivo", fileName, qrCodeImageBytes);
+            await JSRuntime.InvokeVoidAsync("descargarArchivoQr", fileName, qrCodeImageBytes);
         }
     }
 }
