@@ -4,7 +4,6 @@ using SSC_Gimnasio.Client.Pages;
 using SSC_Gimnasio.Components;
 using SSC_Gimnasio.Modelos;
 using SSC_Gimnasio;
-using SSC_Gimnasio.Repositorio;
 using SSC_Gimnasio.Repositorios;
 
 

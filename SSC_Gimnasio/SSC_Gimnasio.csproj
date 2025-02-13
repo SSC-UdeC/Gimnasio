@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="ZXingBlazor" Version="1.1.5" />
     <ProjectReference Include="..\SSC_Gimnasio.Client\SSC_Gimnasio.Client.csproj" />

@@ -1,6 +1,6 @@
 ﻿using SSC_Gimnasio.Modelos;
 
-namespace SSC_Gimnasio.Repositorio
+namespace SSC_Gimnasio.Repositorios
 {
     public interface IRepositorioVisitas
     {

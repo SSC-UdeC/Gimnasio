@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SSC_Gimnasio.Modelos;
 using SSC_Gimnasio.Repositorios;
 
-namespace SSC_Gimnasio.Repositorio
+namespace SSC_Gimnasio.Repositorios
 {
     public class RepositorioClientes : IRepositorioClientes
     {

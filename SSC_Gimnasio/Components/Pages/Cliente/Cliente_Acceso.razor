@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using SSC_Gimnasio.Modelos
 @inject SSC_Gimnasio.Repositorios.IRepositorioClientes RepositorioClientes
+@inject SSC_Gimnasio.Repositorios.IRepositorioVisitas RepositorioVisitas
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
@@ -79,6 +80,10 @@
                 error = null;
                 EscaneoExitoso = true;
                 ShowScanBarcode = false;
+
+                // Guardar visita en la base de datos
+                await RegistrarVisita(cliente);
+
                 StateHasChanged();
                 await Task.Delay(5000);
                 await JSRuntime.InvokeVoidAsync("location.reload");
@@ -95,5 +100,16 @@
             cliente = null;
             resultado = null;
         }
+    }
+
+    private async Task RegistrarVisita(Clientes cliente)
+    {
+        var nuevaVisita = new Visitas
+            {
+                Id_Cliente = cliente.Id_Cliente,
+                Fecha_Visita = DateTime.Now
+            };
+
+        await RepositorioVisitas.Add(nuevaVisita);
     }
 }
