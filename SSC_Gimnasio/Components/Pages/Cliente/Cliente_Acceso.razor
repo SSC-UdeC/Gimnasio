@@ -81,8 +81,10 @@
                 EscaneoExitoso = true;
                 ShowScanBarcode = false;
 
-                // Guardar visita en la base de datos
-                await RegistrarVisita(cliente);
+                if (!MembresiaExpirada){
+                
+                    await RegistrarVisita(cliente);
+                }
 
                 StateHasChanged();
                 await Task.Delay(5000);
