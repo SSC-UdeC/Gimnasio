@@ -4,77 +4,80 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<h3 class="text-center my-4">Lista de Clientes</h3>
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Lista de Clientes</h3>
 
-<div class="container">
-    @if (clientes != null && clientes.Any())
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Teléfono de Emergencia</th>
-                    <th>Fecha de Registro</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cliente in clientes)
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-4" style="border-radius: 15px;">
+                <EditForm Model="@criterioBusqueda" OnValidSubmit="FiltrarClientes">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" placeholder="Buscar por ID o Nombre" @bind-Value="criterioBusqueda" />
+                        <button type="submit" class="btn btn-primary" style="border-radius: 10px;">Buscar</button>
+                    </div>
+                </EditForm>
+
+                @if (!string.IsNullOrEmpty(mensajeError))
                 {
-                    <tr>
-                        <td>@cliente.Id_Cliente</td>
-                        <td>@cliente.Nombre</td>
-                        <td>@cliente.Email</td>
-                        <td>@cliente.Telefono</td>
-                        <td>@cliente.Telefono_Emergencia</td>
-                        <td>@cliente.Fecha_Registro.ToShortDateString()</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" @onclick="() => ConfirmarEdicion(cliente.Id_Cliente)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-4 1a.5.5 0 0 1-.632-.632l1-4a.5.5 0 0 1 .11-.168l10-10zM11.207 3L3 11.207V13h1.793L13 4.793 11.207 3zm1.586-1L14 3.207 12.207 5 10.793 3.793 12.793 1h.293zM1 13.5V16h2.5l9.854-9.854-2.5-2.5L1 13.5z" />
-                                </svg>
-                            </button>
-
-                            <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminacion(cliente.Id_Cliente)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M5.5 5a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V5.5a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5V12a.5.5 0 0 1-1 0V5.5a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0V12a.5.5 0 0 0 1 0V5.5z" />
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4 4v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4H4z" />
-                                </svg>
-                            </button>
-
-                        </td>
-                    </tr>
+                    <div class="alert alert-danger" role="alert">@mensajeError</div>
                 }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <div class="alert alert-info">No hay clientes registrados.</div>
-    }
+
+                @if (clientesFiltrados != null && clientesFiltrados.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Teléfono de Emergencia</th>
+                                <th>Fecha de Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cliente in clientesFiltrados)
+                            {
+                                <tr>
+                                    <td>@cliente.Id_Cliente</td>
+                                    <td>@cliente.Nombre</td>
+                                    <td>@cliente.Email</td>
+                                    <td>@cliente.Telefono</td>
+                                    <td>@cliente.Telefono_Emergencia</td>
+                                    <td>@cliente.Fecha_Registro.ToShortDateString()</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" @onclick="() => ConfirmarEdicion(cliente.Id_Cliente)">Editar</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminacion(cliente.Id_Cliente)">Eliminar</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else if (busquedaRealizada && !clientesFiltrados.Any())
+                {
+                    <div class="alert alert-warning" role="alert">No se encontraron clientes con el criterio de búsqueda proporcionado.</div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @if (mostrarModalEliminar)
 {
-    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5); z-index:1050;" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEliminarLabel">Confirmar Eliminación</h5>
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
                     <button type="button" class="btn-close" @onclick="CerrarModalEliminar"></button>
                 </div>
                 <div class="modal-body">
-                    @if (clienteSeleccionadoObj != null)
-                    {
-                        <p>¿Está seguro de que desea eliminar el cliente <strong>@clienteSeleccionadoObj.Nombre</strong>?</p>
-                    }
-                    else
-                    {
-                        <p>¿Está seguro de que desea eliminar este cliente?</p>
-                    }
+                    ¿Está seguro de que desea eliminar este cliente?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CerrarModalEliminar">Cancelar</button>
@@ -87,22 +90,15 @@
 
 @if (mostrarModalEditar)
 {
-    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5); z-index:1050;" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditarLabel">Confirmar Edición</h5>
+                    <h5 class="modal-title">Confirmar Edición</h5>
                     <button type="button" class="btn-close" @onclick="CerrarModalEditar"></button>
                 </div>
                 <div class="modal-body">
-                    @if (clienteSeleccionadoObj != null)
-                    {
-                        <p>¿Desea editar el cliente <strong>@clienteSeleccionadoObj.Nombre</strong>?</p>
-                    }
-                    else
-                    {
-                        <p>¿Desea editar este cliente?</p>
-                    }
+                    ¿Desea editar la información del cliente?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CerrarModalEditar">Cancelar</button>
@@ -114,28 +110,56 @@
 }
 
 @code {
-    private List<Clientes> clientes = new List<Clientes>();
-    private int clienteSeleccionado;
-    private Clientes clienteSeleccionadoObj;
+    private string criterioBusqueda { get; set; } = string.Empty;
+    private List<Clientes> clientesFiltrados = new List<Clientes>();
+    private bool busquedaRealizada = false;
+    private string mensajeError = string.Empty;
     private bool mostrarModalEliminar = false;
     private bool mostrarModalEditar = false;
+    private int clienteSeleccionado;
 
-    protected override async Task OnInitializedAsync()
+    private async Task FiltrarClientes()
     {
-        clientes = await repositorioClientes.GetAll();
+        mensajeError = string.Empty;
+        busquedaRealizada = false;
+
+        if (string.IsNullOrWhiteSpace(criterioBusqueda))
+        {
+            mensajeError = "Por favor, ingrese un criterio de búsqueda.";
+            return;
+        }
+
+        try
+        {
+            var todosClientes = await repositorioClientes.GetAll();
+            clientesFiltrados = todosClientes
+                .Where(c => c.Nombre.Contains(criterioBusqueda, StringComparison.OrdinalIgnoreCase) || c.Id_Cliente.ToString() == criterioBusqueda)
+                .ToList();
+
+            busquedaRealizada = true;
+
+            if (!clientesFiltrados.Any())
+            {
+                mensajeError = "No se encontraron clientes con el criterio de búsqueda proporcionado.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = "Ocurrió un error al buscar clientes. Por favor, intente nuevamente.";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 
     private void ConfirmarEliminacion(int id)
     {
         clienteSeleccionado = id;
-        clienteSeleccionadoObj = clientes.FirstOrDefault(c => c.Id_Cliente == id);
         mostrarModalEliminar = true;
     }
 
     private async Task EliminarClienteConfirmado()
     {
         await repositorioClientes.Delete(clienteSeleccionado);
-        clientes = await repositorioClientes.GetAll();
+        clientesFiltrados.RemoveAll(c => c.Id_Cliente == clienteSeleccionado);
         mostrarModalEliminar = false;
     }
 
@@ -147,13 +171,11 @@
     private void ConfirmarEdicion(int id)
     {
         clienteSeleccionado = id;
-        clienteSeleccionadoObj = clientes.FirstOrDefault(c => c.Id_Cliente == id);
         mostrarModalEditar = true;
     }
 
     private void EditarClienteConfirmado()
     {
-        mostrarModalEditar = false;
         Navigation.NavigateTo($"/editar-cliente/{clienteSeleccionado}");
     }
 

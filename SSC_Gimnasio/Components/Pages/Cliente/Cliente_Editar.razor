@@ -10,7 +10,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow-lg p-4" style="border-radius: 15px;">
-                <EditForm EditContext="@editContext" OnValidSubmit="@ActualizarCliente">
+                <EditForm EditContext="@editContext" OnValidSubmit="@ConfirmarActualizacion">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -57,12 +57,39 @@
     </div>
 </div>
 
+@if (mostrarModalConfirmacion)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5); z-index:1050;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Actualización</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModalConfirmacion"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea actualizar la información del cliente <strong>@cliente.Nombre</strong>?</p>
+                    <ul>
+                        <li><strong>Correo:</strong> @cliente.Email</li>
+                        <li><strong>Teléfono:</strong> @cliente.Telefono</li>
+                        <li><strong>Teléfono de Emergencia:</strong> @cliente.Telefono_Emergencia</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModalConfirmacion">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @onclick="ActualizarClienteConfirmado">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter] public int Id { get; set; }
     private Clientes cliente = new Clientes();
     private EditContext editContext;
     private string mensaje;
     private string error;
+    private bool mostrarModalConfirmacion = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,18 +110,30 @@
         }
     }
 
-    private async Task ActualizarCliente()
+    private void ConfirmarActualizacion()
+    {
+        mostrarModalConfirmacion = true;
+    }
+
+    private async Task ActualizarClienteConfirmado()
     {
         try
         {
             await RepositorioClientes.Update(Id, cliente);
             mensaje = "Cliente actualizado exitosamente.";
+            mostrarModalConfirmacion = false;
             await Task.Delay(2500);
             Navigation.NavigateTo("/ListaClientes");
         }
         catch (Exception ex)
         {
             error = $"Error al actualizar el cliente: {ex.Message}";
+            mostrarModalConfirmacion = false;
         }
+    }
+
+    private void CerrarModalConfirmacion()
+    {
+        mostrarModalConfirmacion = false;
     }
 }
