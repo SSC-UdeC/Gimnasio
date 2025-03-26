@@ -34,6 +34,11 @@ namespace SSC_Gimnasio.Repositorios
             return await _contexto.Clientes.FindAsync(id);
         }
 
+        public async Task<bool> ClienteExisteAsync(string email, string telefono)
+        {
+            return await _contexto.Clientes.AnyAsync(c => c.Email == email || c.Telefono == telefono);
+        }
+
         public async Task<List<Clientes>> GetAll()
         {
             return await _contexto.Clientes.ToListAsync();

@@ -72,6 +72,12 @@
     {
         try
         {
+            if (await RepositorioClientes.ClienteExisteAsync(cliente.Email, cliente.Telefono))
+            {
+                error = "Ya existe un cliente con el mismo correo o teléfono.";
+                return;
+            }
+
             var clienteRegistrado = await RepositorioClientes.Add(cliente);
             mensaje = "Cliente registrado exitosamente.";
             await Task.Delay(2500);
@@ -83,4 +89,5 @@
             error = $"Error al registrar el cliente: {ex.Message}";
         }
     }
+
 }

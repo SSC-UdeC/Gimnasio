@@ -2,7 +2,7 @@
 @inject LoginService LoginService
 @inject NavigationManager NavigationManager
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg p-3">
+<nav class="navbar navbar-expand-lg shadow-lg p-3" style="background: linear-gradient(45deg, #ff5733, #ffbd33);">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold text-light" href="/">
             <i class="bi bi-lightning-fill me-2"></i> Sistema Gimnasio
@@ -44,12 +44,12 @@
                     </li>
                     <li class="nav-item">
                         <NavLink class="nav-link text-light fw-semibold px-3" href="reporte-visitas">
-                            <i class="bi bi-upc-scan me-2"></i> Reporte de Clientes
+                            <i class="bi bi-clipboard-data-fill me-2"></i> Reporte de Clientes
                         </NavLink>
                     </li>
                     <li class="nav-item">
-                        <NavLink class="nav-link text-light fw-semibold px-3" href="login">
-                            <i class="bi bi-door-open-fill"></i> Cerrar sesion
+                        <NavLink class="nav-link text-light fw-semibold px-3 btn btn-danger" href="login">
+                            <i class="bi bi-door-open-fill"></i> Cerrar sesión
                         </NavLink>
                     </li>
                 </ul>
@@ -61,7 +61,7 @@
 <div class="container mt-4">
     @if (LoginService.IsAuthenticated || NavigationManager.Uri.Contains("/login"))
     {
-        <article class="content px-4">
+        <article class="content px-4 py-3 bg-white shadow rounded">
             @Body
         </article>
     }
@@ -69,7 +69,7 @@
 
 <div id="blazor-error-ui" class="alert alert-danger text-center shadow-lg">
     <strong>Error:</strong> Ha ocurrido un problema inesperado.
-    <a href="" class="reload text-primary fw-bold">Recargar</a>
+    <a href="" class="reload text-warning fw-bold">Recargar</a>
     <button class="btn-close dismiss"></button>
 </div>
 
@@ -85,9 +85,6 @@
     private async Task Logout()
     {
         await LoginService.LogoutAsync();
-        NavigationManager.NavigateTo("/login", true); 
+        NavigationManager.NavigateTo("/login", true);
     }
-
-}
-
 }

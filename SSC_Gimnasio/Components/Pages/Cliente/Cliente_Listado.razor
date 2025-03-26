@@ -35,7 +35,7 @@
                                 <th>Correo</th>
                                 <th>Teléfono</th>
                                 <th>Teléfono de Emergencia</th>
-                                <th>Fecha de Registro</th>
+                                <th>Fecha de expiracion</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -49,6 +49,7 @@
                                     <td>@cliente.Telefono</td>
                                     <td>@cliente.Telefono_Emergencia</td>
                                     <td>@cliente.Fecha_Registro.ToShortDateString()</td>
+                                    <td>@cliente.Fecha_Vencimiento.ToShortDateString()</td>
                                     <td>
                                         <button class="btn btn-primary btn-sm" @onclick="() => ConfirmarEdicion(cliente.Id_Cliente)">Editar</button>
                                         <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminacion(cliente.Id_Cliente)">Eliminar</button>
